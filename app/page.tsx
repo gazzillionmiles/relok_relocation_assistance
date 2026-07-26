@@ -17,16 +17,11 @@ export default function LandingPage() {
           {/* Top Logo */}
           <div className="relative z-10 flex items-center gap-3">
             <div className="w-12 h-12 bg-white/15 rounded-2xl flex items-center justify-center backdrop-blur-xs border border-white/20">
-              <svg
-                className="w-7 h-7 text-white"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-              >
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                <polyline points="9 22 9 12 15 12 15 22" />
-              </svg>
+              <img
+                src="/logo.png"
+                alt="Relok Logo"
+                className="w-7 h-7 object-contain"
+              />
             </div>
             <div>
               <span className="text-2xl font-extrabold text-white tracking-tight">RELOK</span>
@@ -83,16 +78,11 @@ export default function LandingPage() {
           {/* Mobile Header Logo (Visible on mobile only) */}
           <div className="sm:hidden flex flex-col items-center gap-1.5 pt-2 pb-3">
             <div className="w-12 h-12 bg-[#E8F5EE] rounded-xl flex items-center justify-center border border-[#128A4E]/20 shadow-xs">
-              <svg
-                className="w-6 h-6 text-[#128A4E]"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-              >
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                <polyline points="9 22 9 12 15 12 15 22" />
-              </svg>
+              <img
+                src="/logo.png"
+                alt="Relok Logo"
+                className="w-6 h-6 object-contain"
+              />
             </div>
             <span className="text-xl font-extrabold text-[#128A4E] tracking-tight">RELOK</span>
           </div>

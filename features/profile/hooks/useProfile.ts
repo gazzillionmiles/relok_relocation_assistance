@@ -1,32 +1,33 @@
 "use client";
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { UserProfile, LifestylePreferences, HouseRules } from '@/types';
+import { getProfile, updateProfile as updateProfileServer, updatePreferences as updatePreferencesServer, updateHouseRules as updateHouseRulesServer } from '@/actions/profile.actions';
 
 export const INITIAL_USER_PROFILE: UserProfile = {
-  fullName: 'Aarav Sharma',
-  age: '24',
-  gender: 'Male',
-  occupation: 'Software Engineer at Flipkart',
-  education: 'B.Tech, IIT Madras',
-  bio: 'Chill developer looking for a flatmate in HSR Layout. I play guitar, love FIFA on weekends, and maintain a clean space during weekdays.',
+  fullName: '',
+  age: '',
+  gender: '',
+  occupation: '',
+  education: '',
+  bio: '',
   photoUrl:
-    'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=200&h=200',
+    'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200&h=200',
 };
 
 export const INITIAL_LIFESTYLE_PREF: LifestylePreferences = {
-  sleepSchedule: 'Night Owl',
-  cleanliness: 'Spick & Span',
-  socializing: 'Balanced',
-  dietary: 'Veg',
-  smoking: 'Never',
-  drinking: 'Occasionally',
+  sleepSchedule: '',
+  cleanliness: '',
+  socializing: '',
+  dietary: '',
+  smoking: '',
+  drinking: '',
 };
 
 export const INITIAL_HOUSE_RULES: HouseRules = {
-  guests: 'Guests Allowed',
-  loudMusic: 'Quiet Hours',
-  lateEntry: 'Anytime',
+  guests: '',
+  loudMusic: '',
+  lateEntry: '',
 };
 
 export function useProfile() {
@@ -39,12 +40,66 @@ export function useProfile() {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
 
   const showToast = useCallback((msg: string) => {
     setToastMessage(msg);
     setTimeout(() => {
       setToastMessage(null);
     }, 3500);
+  }, []);
+
+  useEffect(() => {
+    async function loadProfile() {
+      setIsLoading(true);
+      try {
+        const res = await getProfile();
+        if (res.success && res.data) {
+          const { profile, preferences, houseRules: dbHouseRules } = res.data as any;
+
+          if (profile) {
+            setUserProfile({
+              fullName: profile.full_name || '',
+              age: profile.date_of_birth
+                ? (new Date().getFullYear() - new Date(profile.date_of_birth).getFullYear()).toString()
+                : '',
+              gender: (profile.gender === 'Any' ? 'Other' : profile.gender) || '',
+              occupation: profile.occupation || '',
+              education: '',
+              bio: profile.bio || '',
+              photoUrl:
+                profile.avatar_url ||
+                'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200&h=200',
+            });
+          }
+
+          if (preferences) {
+            setLifestylePref({
+              sleepSchedule: (preferences.sleep_schedule || '') as any,
+              cleanliness: (preferences.cleanliness_level ? (preferences.cleanliness_level > 3 ? 'Spick & Span' : 'Moderate') : '') as any,
+              socializing: (preferences.socializing || '') as any,
+              dietary: (preferences.food_preference === 'Both' ? 'Any' : (preferences.food_preference || '')) as any,
+              smoking: (preferences.smoking_preference ? (preferences.smoking_preference === 'Not Allowed' ? 'Never' : 'Occasionally') : '') as any,
+              drinking: '',
+            });
+          }
+
+          if (dbHouseRules) {
+            setHouseRules({
+              guests: dbHouseRules.visitors_allowed ? 'Guests Allowed' : 'No Guests',
+              loudMusic: '',
+              lateEntry: '',
+            });
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load profile:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    loadProfile();
   }, []);
 
   const updateUserProfile = useCallback((fields: Partial<UserProfile>) => {
@@ -59,10 +114,40 @@ export function useProfile() {
     setHouseRules((prev) => ({ ...prev, ...fields }));
   }, []);
 
-  const saveProfileChanges = useCallback(() => {
-    setIsEditing(false);
-    showToast('Profile attributes updated successfully! ✓');
-  }, [showToast]);
+  const saveProfileChanges = useCallback(async () => {
+    setIsSaving(true);
+    try {
+      const pRes = await updateProfileServer({
+        full_name: userProfile.fullName,
+        bio: userProfile.bio,
+        occupation: userProfile.occupation,
+        gender: (userProfile.gender === 'Other' ? 'Any' : userProfile.gender) as any,
+        city: 'Bengaluru',
+      });
+
+      const prRes = await updatePreferencesServer({
+        food_preference: (lifestylePref.dietary === 'Any' ? 'Both' : lifestylePref.dietary) as any,
+        smoking_preference: (lifestylePref.smoking === 'Never' ? 'Not Allowed' : 'Allowed') as any,
+        cleanliness_level: lifestylePref.cleanliness === 'Spick & Span' ? 5 : 3,
+      });
+
+      const hrRes = await updateHouseRulesServer({
+        visitors_allowed: houseRules.guests === 'Guests Allowed',
+        overnight_guests: houseRules.guests === 'Guests Allowed',
+      });
+
+      if (pRes.success && prRes.success && hrRes.success) {
+        setIsEditing(false);
+        showToast('Profile attributes updated successfully! ✓');
+      } else {
+        showToast((pRes as any).error || (prRes as any).error || (hrRes as any).error || 'Failed to update profile.');
+      }
+    } catch (err: any) {
+      showToast(err.message || 'An unexpected error occurred while saving.');
+    } finally {
+      setIsSaving(false);
+    }
+  }, [userProfile, lifestylePref, houseRules, showToast]);
 
   return {
     userProfile,
@@ -78,5 +163,7 @@ export function useProfile() {
     toastMessage,
     showToast,
     saveProfileChanges,
+    isLoading,
+    isSaving,
   };
 }

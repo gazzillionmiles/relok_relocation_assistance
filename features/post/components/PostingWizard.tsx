@@ -22,6 +22,7 @@ export function PostingWizard() {
     resetForm,
     publishListing,
     isPublishing,
+    error,
   } = usePostingWizard();
 
   const isCurrentStepValid =
@@ -76,9 +77,22 @@ export function PostingWizard() {
         <PhotoUploadStep
           formData={formData}
           updateFormData={updateFormData}
-          onNext={nextStep}
+          onNext={() => goToStep('review')}
           onPrev={prevStep}
           isValid={isCurrentStepValid}
+        />
+      )}
+
+      {currentStep === 'review' && (
+        <ReviewStep
+          formData={formData}
+          onEditStep={goToStep}
+          onPrev={() => goToStep(5)}
+          onPublish={publishListing}
+          onReset={resetForm}
+          isPublishing={isPublishing}
+          isPublished={false}
+          error={error}
         />
       )}
 
@@ -86,11 +100,12 @@ export function PostingWizard() {
         <ReviewStep
           formData={formData}
           onEditStep={goToStep}
-          onPrev={prevStep}
+          onPrev={() => goToStep(5)}
           onPublish={publishListing}
           onReset={resetForm}
           isPublishing={isPublishing}
-          isPublished={currentStep === 'published'}
+          isPublished={true}
+          error={error}
         />
       )}
     </WizardLayout>

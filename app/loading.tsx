@@ -5,17 +5,11 @@ export default function GlobalLoading() {
     <div className="min-h-screen w-full bg-slate-900 flex flex-col items-center justify-center p-6 text-white selection:bg-[#128A4E]/30">
       <div className="flex flex-col items-center gap-4 text-center animate-pulse">
         <div className="w-16 h-16 bg-[#E8F5EE] rounded-3xl flex items-center justify-center border-2 border-[#128A4E] shadow-sm">
-          <svg
-            className="w-8 h-8 text-[#128A4E]"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            aria-hidden="true"
-          >
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-            <polyline points="9 22 9 12 15 12 15 22" />
-          </svg>
+          <img
+            src="/logo.png"
+            alt="Relok Logo"
+            className="w-8 h-8 object-contain"
+          />
         </div>
 
         <div className="flex flex-col gap-1">

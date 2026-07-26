@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ModerationBadge, ModerationState } from './ModerationBadge';
+import { getAllReports, updateReportStatus } from '@/actions/profile.actions';
 
 interface MockReport {
   id: string;
@@ -14,54 +15,57 @@ interface MockReport {
   status: ModerationState;
 }
 
-const MOCK_REPORTS: MockReport[] = [
-  {
-    id: 'REP-101',
-    type: 'listing',
-    targetTitle: 'Luxury 2BHK in Indiranagar',
-    targetId: 'LST-882',
-    reportedBy: 'Aarav Sharma',
-    reason: 'Fraud / Scam - Unrealistic rent price',
-    date: '2 hours ago',
-    status: 'under_review',
-  },
-  {
-    id: 'REP-102',
-    type: 'user',
-    targetTitle: 'Priya Verma',
-    targetId: 'USR-304',
-    reportedBy: 'Kavita Roy',
-    reason: 'Spam / Automated messaging',
-    date: '5 hours ago',
-    status: 'under_review',
-  },
-  {
-    id: 'REP-103',
-    type: 'listing',
-    targetTitle: 'Co-Living Private Room in Koramangala',
-    targetId: 'LST-412',
-    reportedBy: 'Rohan Mehta',
-    reason: 'Already Rented',
-    date: '1 day ago',
-    status: 'hidden_by_moderation',
-  },
-  {
-    id: 'REP-104',
-    type: 'user',
-    targetTitle: 'Anand Brokers Agency',
-    targetId: 'USR-902',
-    reportedBy: 'Divya N',
-    reason: 'Harassment / Inappropriate behavior',
-    date: '2 days ago',
-    status: 'suspended',
-  },
-];
-
 export function AdminDashboardView() {
   const [activeTab, setActiveTab] = useState<'reports' | 'reported-users' | 'reported-listings' | 'hidden-listings' | 'suspended-users' | 'review-queue'>('reports');
-  const [reports, setReports] = useState<MockReport[]>(MOCK_REPORTS);
+  const [reports, setReports] = useState<MockReport[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const handleUpdateStatus = (id: string, newStatus: ModerationState) => {
+  useEffect(() => {
+    async function fetchReports() {
+      setIsLoading(true);
+      try {
+        const res = await getAllReports();
+        if (res.success && res.data && res.data.length > 0) {
+          const dbReports: MockReport[] = res.data.map((r: any) => {
+            let uiStatus: ModerationState = 'under_review';
+            if (r.status === 'resolved') uiStatus = 'active';
+            if (r.status === 'rejected') uiStatus = 'under_review';
+            
+            return {
+              id: r.id, // Keep full DB ID for updating
+              type: r.target_type,
+              targetTitle: r.target_type === 'listing' ? 'Property Listing Post' : 'User Account Profile',
+              targetId: r.target_id,
+              reportedBy: 'Anonymous User',
+              reason: r.reason,
+              date: new Date(r.created_at).toLocaleDateString(),
+              status: uiStatus,
+            };
+          });
+          setReports(dbReports);
+        } else {
+          setReports([]);
+        }
+      } catch (err) {
+        console.error('Failed to load admin reports:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchReports();
+  }, []);
+
+  const handleUpdateStatus = async (id: string, newStatus: ModerationState) => {
+    try {
+      let dbStatus = 'open';
+      if (newStatus === 'active') dbStatus = 'resolved';
+      if (newStatus === 'suspended' || newStatus === 'hidden_by_moderation') dbStatus = 'resolved';
+      
+      await updateReportStatus(id, dbStatus);
+    } catch (err) {
+      console.error('Failed to save status in database:', err);
+    }
+
     setReports((prev) =>
       prev.map((r) => (r.id === id ? { ...r, status: newStatus } : r))
     );
@@ -134,7 +138,12 @@ export function AdminDashboardView() {
             <span className="text-xs text-slate-400">Placeholder UI model for backend moderation API</span>
           </div>
 
-          {filteredReports.length === 0 ? (
+          {isLoading ? (
+            <div className="p-12 text-center text-emerald-400 text-xs font-semibold flex items-center justify-center gap-2">
+              <div className="w-4 h-4 border-2 border-t-transparent border-emerald-400 rounded-full animate-spin" />
+              <span>Loading reports...</span>
+            </div>
+          ) : filteredReports.length === 0 ? (
             <div className="p-12 text-center text-slate-400 text-xs font-medium">
               No records found under this section.
             </div>

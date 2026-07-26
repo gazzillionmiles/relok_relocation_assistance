@@ -20,7 +20,6 @@ export function ChatView() {
     selectThread,
     sendMessage,
     threads,
-    setActiveThreadId,
   } = useChatState();
 
   // Mobile state: whether active thread is open on small screens

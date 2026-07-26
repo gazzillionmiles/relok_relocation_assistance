@@ -10,9 +10,9 @@ export const metadata = {
 
 export default function IntentPage() {
   return (
-    <main className="min-h-screen w-full bg-slate-900 flex items-center justify-center p-4 sm:p-6 lg:p-10 font-sans selection:bg-[#128A4E]/30 antialiased">
+    <main className="min-h-screen w-full bg-slate-50 flex items-center justify-center p-4 sm:p-5 lg:p-6 font-sans selection:bg-[#128A4E]/30 antialiased">
       {/* Container Card */}
-      <div className="w-full max-w-6xl min-h-[640px] bg-white rounded-3xl shadow-2xl p-6 sm:p-10 lg:p-12 border border-slate-800 flex flex-col justify-between gap-8">
+      <div className="w-full max-w-4xl bg-white rounded-2xl shadow-md p-4 sm:p-6 lg:p-8 flex flex-col justify-between gap-5">
         {/* Header & Description */}
         <div className="flex flex-col gap-4">
           <IntentHeader />

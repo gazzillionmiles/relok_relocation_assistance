@@ -16,6 +16,7 @@ export interface ReviewStepProps {
   onReset: () => void;
   isPublishing: boolean;
   isPublished: boolean;
+  error?: string;
 }
 
 export function ReviewStep({
@@ -26,6 +27,7 @@ export function ReviewStep({
   onReset,
   isPublishing,
   isPublished,
+  error,
 }: ReviewStepProps) {
   if (isPublished) {
     return (
@@ -86,6 +88,12 @@ export function ReviewStep({
         />
 
         <ListingPreviewCard data={formData} onEditStep={onEditStep} />
+
+        {error && (
+          <div className="p-3 text-xs font-semibold text-red-700 bg-red-50 border border-red-200 rounded-2xl">
+            ⚠️ {error}
+          </div>
+        )}
 
         <div className="bg-[#E8F5EE] border border-[#128A4E]/20 rounded-2xl p-4 flex gap-3 items-center">
           <span className="text-lg shrink-0">✨</span>

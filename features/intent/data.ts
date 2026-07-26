@@ -31,12 +31,4 @@ export const INTENT_OPTIONS: IntentOption[] = [
     route: '/post',
     iconName: 'home',
   },
-  {
-    id: 'broker',
-    title: 'Use as Broker',
-    description: 'List and manage multiple properties as a real estate agent.',
-    badge: 'Enterprise',
-    route: '/broker/onboarding',
-    iconName: 'briefcase',
-  },
 ];

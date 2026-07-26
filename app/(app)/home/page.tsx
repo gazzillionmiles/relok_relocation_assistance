@@ -7,6 +7,8 @@ export const metadata = {
   description: 'Explore available rooms, private flats, and compatible roommates.',
 };
 
+export const dynamic = 'force-dynamic';
+
 export default function HomePage() {
   return (
     <PageContainer>

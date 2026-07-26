@@ -13,7 +13,6 @@ export function DesktopTopBar() {
     if (pathname.startsWith('/post')) return 'Post Property Listing';
     if (pathname.startsWith('/chats')) return 'Messages & Inquiries';
     if (pathname.startsWith('/profile')) return 'User Profile Hub';
-    if (pathname.startsWith('/broker')) return 'Broker Enterprise Hub';
     return 'Dashboard';
   };
 

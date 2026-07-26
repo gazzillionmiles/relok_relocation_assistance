@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { INDIAN_CITIES } from '@/data/data';
+const INDIAN_CITIES = ['Bengaluru', 'Delhi', 'Mumbai', 'Pune', 'Hyderabad', 'Chennai']; // TODO: Move to DB
 import { MatchFilterOptions } from '../lib/match-filters';
 
 export interface MatchFiltersProps {

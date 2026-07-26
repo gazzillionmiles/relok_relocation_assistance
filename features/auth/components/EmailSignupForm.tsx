@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
+import { signUpWithEmail } from '@/actions/auth.actions';
 
 interface EmailSignupFormProps {
   onSuccess?: () => void;
@@ -16,11 +17,13 @@ export function EmailSignupForm({ onSuccess }: EmailSignupFormProps) {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setSuccessMsg('');
 
     if (!name.trim()) {
       setError('Please enter your full name.');
@@ -30,8 +33,8 @@ export function EmailSignupForm({ onSuccess }: EmailSignupFormProps) {
       setError('Please enter a valid email address.');
       return;
     }
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters long.');
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters long.');
       return;
     }
     if (password !== confirmPassword) {
@@ -41,15 +44,32 @@ export function EmailSignupForm({ onSuccess }: EmailSignupFormProps) {
 
     setIsLoading(true);
 
-    // Mock signup delay
-    setTimeout(() => {
+    try {
+      const res = await signUpWithEmail({
+        email,
+        password,
+        full_name: name,
+        city: 'Bengaluru', // Default city per project conventions
+      });
       setIsLoading(false);
-      if (onSuccess) {
-        onSuccess();
+
+      if (res.success) {
+        if (res.data?.needsVerification) {
+          setSuccessMsg('Account created successfully! Please check your email inbox to verify your account before logging in.');
+        } else {
+          if (onSuccess) {
+            onSuccess();
+          } else {
+            router.push('/home');
+          }
+        }
       } else {
-        router.push('/email-verification');
+        setError(res.error || 'Failed to create account. Please try again.');
       }
-    }, 600);
+    } catch (err: any) {
+      setIsLoading(false);
+      setError(err.message || 'An unexpected error occurred during signup.');
+    }
   };
 
   return (
@@ -57,6 +77,12 @@ export function EmailSignupForm({ onSuccess }: EmailSignupFormProps) {
       {error && (
         <div className="p-2.5 text-xs font-semibold text-red-700 bg-red-50 border border-red-200 rounded-lg">
           {error}
+        </div>
+      )}
+
+      {successMsg && (
+        <div className="p-2.5 text-xs font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 rounded-lg">
+          {successMsg}
         </div>
       )}
  

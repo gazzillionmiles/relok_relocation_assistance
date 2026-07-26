@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
-import { INDIAN_CITIES } from '@/data/data';
+const INDIAN_CITIES = ['Bengaluru', 'Delhi', 'Mumbai', 'Pune', 'Hyderabad', 'Chennai']; // TODO: Move to DB
 
 export interface CitySelectorProps {
   selectedCity: string;

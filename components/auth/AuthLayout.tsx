@@ -27,16 +27,11 @@ export function AuthLayout({
           <div className="relative z-10">
             <Link href="/" className="inline-flex items-center gap-2 group focus:outline-none">
               <div className="w-10 h-10 bg-white/15 rounded-xl flex items-center justify-center backdrop-blur-xs border border-white/20 group-hover:bg-white/25 transition-all">
-                <svg
-                  className="w-6 h-6 text-white"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                >
-                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                  <polyline points="9 22 9 12 15 12 15 22" />
-                </svg>
+                <img
+                  src="/logo.png"
+                  alt="Relok Logo"
+                  className="w-6 h-6 object-contain"
+                />
               </div>
               <span className="text-xl font-extrabold text-white tracking-tight">RELOK</span>
             </Link>

@@ -9,8 +9,9 @@ import {
   validateStep4,
   validateStep5,
 } from '../lib/validation';
+import { createProperty } from '@/actions/property.actions';
 
-export type StepNumber = 1 | 2 | 3 | 4 | 5 | 'published';
+export type StepNumber = 1 | 2 | 3 | 4 | 5 | 'review' | 'published';
 
 export const INITIAL_POSTING_DATA: PostingFormData = {
   listingType: 'Room',
@@ -39,6 +40,7 @@ export function usePostingWizard() {
   const [currentStep, setCurrentStep] = useState<StepNumber>(1);
   const [formData, setFormData] = useState<PostingFormData>(INITIAL_POSTING_DATA);
   const [isPublishing, setIsPublishing] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
 
   const updateFormData = useCallback((fields: Partial<PostingFormData>) => {
     setFormData((prev) => ({ ...prev, ...fields }));
@@ -90,15 +92,48 @@ export function usePostingWizard() {
     setFormData(INITIAL_POSTING_DATA);
     setCurrentStep(1);
     setIsPublishing(false);
+    setError('');
   }, []);
 
-  const publishListing = useCallback(() => {
+  const publishListing = useCallback(async () => {
     setIsPublishing(true);
-    setTimeout(() => {
+    setError('');
+    try {
+      const payload: any = {
+        title: formData.title,
+        description: formData.description,
+        monthly_rent: typeof formData.monthlyRent === 'number' ? formData.monthlyRent : 10000,
+        security_deposit: typeof formData.securityDeposit === 'number' ? formData.securityDeposit : 20000,
+        property_type: (formData.listingType === '1BHK' || formData.listingType === '2BHK' ? 'Apartment' : 'Co-Living') as any,
+        address: formData.address,
+        locality: formData.landmark || undefined,
+        city: 'Bengaluru',
+        latitude: formData.mapCenter?.lat || 12.9116,
+        longitude: formData.mapCenter?.lng || 77.6389,
+        bedrooms: 1,
+        bathrooms: 1,
+        balcony: true,
+        parking: true,
+        furnished: 'Semi' as any,
+        available_from: formData.availableFrom || new Date().toISOString().split('T')[0],
+        gender_preference: formData.preferredGender as any,
+        smoking_allowed: formData.houseRules?.includes('Smoking Allowed') || false,
+        pets_allowed: true,
+        food_preference: 'Both' as any,
+      };
+
+      const res = await createProperty(payload);
+      if (res.success) {
+        setCurrentStep('published');
+      } else {
+        setError(res.error || 'Failed to publish property listing.');
+      }
+    } catch (err: any) {
+      setError(err.message || 'An unexpected error occurred while publishing.');
+    } finally {
       setIsPublishing(false);
-      setCurrentStep('published');
-    }, 600);
-  }, []);
+    }
+  }, [formData]);
 
   return {
     currentStep,
@@ -111,5 +146,6 @@ export function usePostingWizard() {
     resetForm,
     publishListing,
     isPublishing,
+    error,
   };
 }

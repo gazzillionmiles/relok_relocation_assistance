@@ -35,10 +35,4 @@ export const MAIN_NAV_ITEMS: NavItemConfig[] = [
     href: '/profile',
     iconName: 'profile',
   },
-  {
-    label: 'Broker Hub',
-    href: '/broker/onboarding',
-    iconName: 'briefcase',
-    isBrokerOnly: true,
-  },
 ];

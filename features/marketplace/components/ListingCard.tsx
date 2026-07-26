@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { RoomListing } from '@/types';
@@ -10,6 +10,7 @@ import { useSafetyCheck } from '@/components/compliance/useSafetyCheck';
 import { SafetyDisclaimerModal } from '@/components/compliance/SafetyDisclaimerModal';
 import { TrustSignals } from '@/features/safety/components/TrustSignals';
 import { ReportListingDialog } from '@/features/reporting/components/ReportListingDialog';
+import { isPropertyFavorited, addPropertyToFavorites, removePropertyFromFavorites } from '@/actions/property.actions';
 
 export interface ListingCardProps {
   room: RoomListing;
@@ -23,6 +24,14 @@ export function ListingCard({ room, distanceKm }: ListingCardProps) {
   const [showMenu, setShowMenu] = useState(false);
   const [showReportDialog, setShowReportDialog] = useState(false);
   const [toastMsg, setToastMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function checkFav() {
+      const favorited = await isPropertyFavorited(room.id);
+      setIsSaved(favorited);
+    }
+    checkFav();
+  }, [room.id]);
 
   const {
     isDisclaimerOpen,
@@ -39,11 +48,19 @@ export function ListingCard({ room, distanceKm }: ListingCardProps) {
     }, `contacting lister for ${room.title}`);
   };
 
-  const handleSaveToggle = (e: React.MouseEvent) => {
+  const handleSaveToggle = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    setIsSaved(!isSaved);
+    const newSavedState = !isSaved;
+    setIsSaved(newSavedState);
     setShowMenu(false);
-    showToast(!isSaved ? 'Listing saved to bookmarks! 🔖' : 'Listing removed from saved');
+    
+    if (newSavedState) {
+      await addPropertyToFavorites(room.id);
+      showToast('Listing saved to bookmarks! 🔖');
+    } else {
+      await removePropertyFromFavorites(room.id);
+      showToast('Listing removed from saved');
+    }
   };
 
   const handleShare = (e: React.MouseEvent) => {
@@ -204,9 +221,9 @@ export function ListingCard({ room, distanceKm }: ListingCardProps) {
             <DistanceBadge distanceKm={distanceKm ?? null} />
 
             <TrustSignals
-              memberSince="Jan 2024"
-              listingType="Owner Listing"
-              postedAgo="2 days ago"
+              memberSince={room.memberSince || "Jan 2024"}
+              listingType="Tenant Listing"
+              postedAgo={room.createdAt || "Recently"}
               className="mt-1"
             />
           </div>

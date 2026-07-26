@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { CategoryFilter, SharingModeFilter } from '../hooks/useMarketplaceFilters';
-import { INDIAN_CITIES } from '@/data/data';
+const INDIAN_CITIES = ['Bengaluru', 'Delhi', 'Mumbai', 'Pune', 'Hyderabad', 'Chennai']; // TODO: Move to DB
 
 export interface FilterDrawerProps {
   selectedCity: string;

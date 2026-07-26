@@ -7,6 +7,8 @@ export const metadata = {
   description: 'Manage conversations with flatmates and property listers.',
 };
 
+export const dynamic = 'force-dynamic';
+
 export default function ChatsPage() {
   return (
     <PageContainer className="!py-2">

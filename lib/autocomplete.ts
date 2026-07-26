@@ -1,4 +1,8 @@
-import { COLLEGES } from '@/data/autocompleteData';
+const COLLEGES: string[] = [
+  'Delhi University', 'IIT Delhi', 'RVCE Bengaluru', 'PES University', 'IIM Bangalore',
+  'Mumbai University', 'IIT Bombay', 'Pune University', 'Symbiosis Pune', 'IIIT Hyderabad',
+  'IIT Madras', 'Loyola College', 'Christ University', 'St. Stephen\'s', 'DTU Delhi'
+];
 
 export function getPrioritizedColleges(city: string): string[] {
   const targetCity = (city || 'Bengaluru').toLowerCase();

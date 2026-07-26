@@ -176,7 +176,7 @@ export function RoommateCard({ roommate, distanceKm }: RoommateCardProps) {
         <DistanceBadge distanceKm={distanceKm ?? null} />
 
         <TrustSignals
-          memberSince="Feb 2024"
+          memberSince={roommate.memberSince || "Jan 2024"}
           lastActive="Active recently"
           profileCompletion={92}
         />

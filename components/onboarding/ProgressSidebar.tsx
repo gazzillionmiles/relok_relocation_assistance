@@ -16,16 +16,11 @@ export function ProgressSidebar({ currentStep, steps }: ProgressSidebarProps) {
       <div className="relative z-10 flex flex-col gap-1.5">
         <div className="flex items-center gap-2.5">
           <div className="w-9 h-9 bg-white/15 rounded-xl flex items-center justify-center backdrop-blur-xs border border-white/20">
-            <svg
-              className="w-5 h-5 text-white"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-            >
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-              <polyline points="9 22 9 12 15 12 15 22" />
-            </svg>
+            <img
+              src="/logo.png"
+              alt="Relok Logo"
+              className="w-5 h-5 object-contain"
+            />
           </div>
           <span className="text-lg font-extrabold text-white tracking-tight">RELOK</span>
         </div>

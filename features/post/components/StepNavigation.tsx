@@ -1,7 +1,8 @@
 import React from 'react';
+import { StepNumber } from '../hooks/usePostingWizard';
 
 export interface StepNavigationProps {
-  currentStep: number | 'published';
+  currentStep: StepNumber;
   onGoToStep: (step: 1 | 2 | 3 | 4 | 5) => void;
   isStepValid: (step: number) => boolean;
 }

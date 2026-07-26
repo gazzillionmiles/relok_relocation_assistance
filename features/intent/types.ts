@@ -2,8 +2,7 @@ export type IntentType =
   | 'roommate'
   | 'private_room'
   | 'shared_room'
-  | 'post_room'
-  | 'broker';
+  | 'post_room';
 
 export interface IntentOption {
   id: IntentType;
@@ -11,5 +10,5 @@ export interface IntentOption {
   description: string;
   badge?: string;
   route: string;
-  iconName: 'users' | 'key' | 'bed' | 'home' | 'briefcase';
+  iconName: 'users' | 'key' | 'bed' | 'home';
 }

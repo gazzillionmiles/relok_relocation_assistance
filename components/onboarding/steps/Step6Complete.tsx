@@ -37,16 +37,11 @@ export function Step6Complete({
         <div className="flex flex-col items-center justify-center text-center py-4 gap-6">
           {/* Animated House Completion Lockup */}
           <div className="relative w-36 h-36 sm:w-44 sm:h-44 flex items-center justify-center bg-[#E8F5EE] rounded-full border-[3px] border-[#128A4E]/20 animate-pulse">
-            <svg
-              className="w-20 h-20 sm:w-24 sm:h-24 text-[#128A4E]"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-            >
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-              <polyline points="9 22 9 12 15 12 15 22" />
-            </svg>
+            <img
+              src="/logo.png"
+              alt="Relok Logo"
+              className="w-20 h-20 sm:w-24 sm:h-24 object-contain"
+            />
             <div className="absolute -bottom-1 -right-1 bg-[#128A4E] text-white p-3 rounded-full border-4 border-white shadow-md">
               <svg
                 className="w-5 h-5 sm:w-6 sm:h-6"

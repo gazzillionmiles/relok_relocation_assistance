@@ -11,7 +11,7 @@ export function IntentHeader() {
           Customized Navigation
         </span>
       </div>
-      <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0F172A] tracking-tight">
+      <h1 className="text-xl sm:text-2xl font-extrabold text-[#0F172A] tracking-tight">
         What are you looking for?
       </h1>
     </div>

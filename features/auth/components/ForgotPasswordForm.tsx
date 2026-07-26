@@ -3,21 +3,32 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
+import { requestPasswordReset } from '@/actions/auth.actions';
 
 export function ForgotPasswordForm() {
   const [email, setEmail] = useState('');
   const [isSent, setIsSent] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
 
+    setError('');
     setIsLoading(true);
-    setTimeout(() => {
+    try {
+      const res = await requestPasswordReset({ email });
       setIsLoading(false);
-      setIsSent(true);
-    }, 500);
+      if (res.success) {
+        setIsSent(true);
+      } else {
+        setError(res.error || 'Failed to request password reset. Please try again.');
+      }
+    } catch (err: any) {
+      setIsLoading(false);
+      setError(err.message || 'An unexpected error occurred.');
+    }
   };
 
   if (isSent) {
@@ -43,6 +54,11 @@ export function ForgotPasswordForm() {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3 w-full">
+      {error && (
+        <div className="p-2.5 text-xs font-semibold text-red-700 bg-red-50 border border-red-200 rounded-lg">
+          {error}
+        </div>
+      )}
       <div className="flex flex-col gap-1">
         <label htmlFor="forgotEmail" className="text-[10px] font-bold text-slate-700 uppercase tracking-wider">
           Email Address

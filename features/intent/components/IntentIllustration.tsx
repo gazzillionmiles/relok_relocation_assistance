@@ -2,9 +2,9 @@ import React from 'react';
 
 export function IntentIllustration() {
   return (
-    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-[#E8F5EE] rounded-2xl flex items-center justify-center border-2 border-[#128A4E]/20 shadow-xs shrink-0">
+    <div className="w-12 h-12 bg-[#E8F5EE] rounded-xl flex items-center justify-center border border-[#128A4E]/20 shadow-xs shrink-0">
       <svg
-        className="w-8 h-8 sm:w-10 sm:h-10 text-[#128A4E]"
+        className="w-6 h-6 text-[#128A4E]"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"

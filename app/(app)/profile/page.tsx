@@ -7,6 +7,8 @@ export const metadata = {
   description: 'Manage your personal attributes, lifestyle preferences, and account settings.',
 };
 
+export const dynamic = 'force-dynamic';
+
 export default function ProfilePage() {
   return (
     <PageContainer>

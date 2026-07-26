@@ -16,10 +16,12 @@ import { Step3RoommatePref } from './steps/Step3RoommatePref';
 import { Step4Habits } from './steps/Step4Habits';
 import { Step5Rules } from './steps/Step5Rules';
 import { Step6Complete } from './steps/Step6Complete';
+import { updateProfile, updatePreferences, updateHouseRules } from '@/actions/profile.actions';
 
 export function OnboardingWizard() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState<number>(1);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
 
   // User Profile State
   const [userProfile, setUserProfile] = useState<UserProfile>({
@@ -123,8 +125,38 @@ export function OnboardingWizard() {
     router.push('/intent');
   };
 
-  const handleComplete = () => {
-    router.push('/intent');
+  const handleComplete = async () => {
+    setIsSaving(true);
+    try {
+      await updateProfile({
+        full_name: userProfile.fullName || 'New User',
+        bio: userProfile.bio || 'Co-living roommate',
+        occupation: userProfile.occupation || 'Professional',
+        gender: (userProfile.gender === 'Other' ? 'Any' : userProfile.gender) as any,
+        city: roomPref.cities[0] || 'Bengaluru',
+      });
+
+      await updatePreferences({
+        food_preference: (lifestylePref.dietary === 'Any' ? 'Both' : lifestylePref.dietary) as any,
+        smoking_preference: (lifestylePref.smoking === 'Never' ? 'Not Allowed' : 'Allowed') as any,
+        cleanliness_level: lifestylePref.cleanliness === 'Spick & Span' ? 5 : 3,
+        budget_min: roomPref.budgetMin || 0,
+        budget_max: roomPref.budgetMax || 100000,
+        gender_preference: (roomPref.preferredGender === 'Other' ? 'Any' : roomPref.preferredGender) as any,
+      });
+
+      await updateHouseRules({
+        visitors_allowed: houseRules.guests === 'Guests Allowed',
+        overnight_guests: houseRules.guests === 'Guests Allowed',
+      });
+
+      router.push('/intent');
+    } catch (err) {
+      console.error('Failed to save onboarding attributes:', err);
+      router.push('/intent');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleBackToLogin = () => {
@@ -133,6 +165,12 @@ export function OnboardingWizard() {
 
   return (
     <OnboardingLayout currentStep={currentStep}>
+      {isSaving && (
+        <div className="fixed inset-0 bg-white/60 backdrop-blur-xs z-50 flex flex-col items-center justify-center gap-3">
+          <div className="w-10 h-10 border-4 border-t-transparent border-[#128A4E] rounded-full animate-spin" />
+          <span className="text-sm font-bold text-[#128A4E]">Saving onboarding profile...</span>
+        </div>
+      )}
       {currentStep === 1 && (
         <Step1Lifestyle
           data={lifestylePref}

@@ -5,7 +5,7 @@ import { UserProfile, LifestylePreferences } from '@/types';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { AutocompleteInput } from '@/components/ui/AutocompleteInput';
-import { OCCUPATIONS } from '@/data/autocompleteData';
+const OCCUPATIONS = ['Student', 'Software Engineer', 'Designer', 'Doctor', 'Teacher', 'Business', 'Freelancer', 'Other'];
 import { getPrioritizedColleges } from '@/lib/autocomplete';
 
 export interface EditProfileFormProps {

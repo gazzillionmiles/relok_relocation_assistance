@@ -7,6 +7,8 @@ export const metadata = {
   description: 'Find AI-matched roommate candidates based on your lifestyle, habits, and preferences.',
 };
 
+export const dynamic = 'force-dynamic';
+
 export default function MatchesPage() {
   return (
     <PageContainer>

@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
+import { updatePassword } from '@/actions/auth.actions';
 
 export function ResetPasswordForm() {
   const [password, setPassword] = useState('');
@@ -11,12 +12,12 @@ export function ResetPasswordForm() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters long.');
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters long.');
       return;
     }
     if (password !== confirmPassword) {
@@ -25,10 +26,18 @@ export function ResetPasswordForm() {
     }
 
     setIsLoading(true);
-    setTimeout(() => {
+    try {
+      const res = await updatePassword({ password, confirmPassword });
       setIsLoading(false);
-      setIsSuccess(true);
-    }, 500);
+      if (res.success) {
+        setIsSuccess(true);
+      } else {
+        setError(res.error || 'Failed to reset password. Please try again.');
+      }
+    } catch (err: any) {
+      setIsLoading(false);
+      setError(err.message || 'An unexpected error occurred.');
+    }
   };
 
   if (isSuccess) {

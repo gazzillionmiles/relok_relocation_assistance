@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
+import { signInWithEmail } from '@/actions/auth.actions';
 
 interface EmailLoginFormProps {
   onSuccess?: () => void;
@@ -17,7 +18,7 @@ export function EmailLoginForm({ onSuccess }: EmailLoginFormProps) {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
@@ -32,15 +33,23 @@ export function EmailLoginForm({ onSuccess }: EmailLoginFormProps) {
 
     setIsLoading(true);
 
-    // Mock authentication delay before routing
-    setTimeout(() => {
+    try {
+      const res = await signInWithEmail({ email, password });
       setIsLoading(false);
-      if (onSuccess) {
-        onSuccess();
+
+      if (res.success) {
+        if (onSuccess) {
+          onSuccess();
+        } else {
+          router.push('/home');
+        }
       } else {
-        router.push('/intent');
+        setError(res.error || 'Login failed. Please check your credentials.');
       }
-    }, 500);
+    } catch (err: any) {
+      setIsLoading(false);
+      setError(err.message || 'An unexpected error occurred.');
+    }
   };
 
   return (

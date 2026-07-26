@@ -27,10 +27,26 @@ export function ProfileView() {
     toastMessage,
     showToast,
     saveProfileChanges,
+    isLoading,
+    isSaving,
   } = useProfile();
+
+  if (isLoading) {
+    return (
+      <div className="p-12 text-center text-[#128A4E] text-sm font-semibold flex flex-col items-center justify-center gap-3">
+        <div className="w-8 h-8 border-4 border-t-transparent border-[#128A4E] rounded-full animate-spin" />
+        <span>Loading your profile attributes...</span>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full flex flex-col gap-6 relative">
+      {isSaving && (
+        <div className="absolute inset-0 bg-white/50 backdrop-blur-xs z-50 flex items-center justify-center">
+          <div className="w-8 h-8 border-4 border-t-transparent border-[#128A4E] rounded-full animate-spin" />
+        </div>
+      )}
       {/* Toast Notification Banner */}
       {toastMessage && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-[#128A4E] text-white font-bold text-xs sm:text-sm px-5 py-3 rounded-2xl shadow-xl z-50 flex items-center gap-2 border border-white/20 animate-bounce">

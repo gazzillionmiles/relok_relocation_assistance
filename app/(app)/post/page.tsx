@@ -7,6 +7,8 @@ export const metadata = {
   description: 'Create a professional property listing to find flatmates on Relok.',
 };
 
+export const dynamic = 'force-dynamic';
+
 export default function PostPage() {
   return (
     <PageContainer>

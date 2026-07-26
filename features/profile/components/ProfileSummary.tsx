@@ -7,6 +7,7 @@ export interface ProfileSummaryProps {
 }
 
 export function ProfileSummary({ userProfile }: ProfileSummaryProps) {
+  console.log(userProfile)
   return (
     <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-xs flex flex-col gap-5">
       {/* Top Identity Lockup */}
@@ -20,7 +21,7 @@ export function ProfileSummary({ userProfile }: ProfileSummaryProps) {
         <div className="flex flex-col min-w-0">
           <div className="flex items-center gap-2">
             <h2 className="text-xl font-black text-[#0F172A] truncate">
-              {userProfile.fullName || 'Aarav Sharma'}
+              {userProfile.fullName || 'User'}
             </h2>
             <span className="w-5 h-5 rounded-full bg-[#128A4E] text-white flex items-center justify-center text-[10px] font-bold shadow-2xs">
               ✓
@@ -28,7 +29,7 @@ export function ProfileSummary({ userProfile }: ProfileSummaryProps) {
           </div>
 
           <p className="text-xs text-gray-500 font-semibold truncate mt-0.5">
-            {userProfile.occupation || 'Software Engineer'} • {userProfile.age || '24'} yrs
+            {userProfile.occupation || 'No Occupation Added'}{userProfile.age ? ` • ${userProfile.age} yrs` : ''}
           </p>
 
           <span className="inline-flex items-center gap-1 text-[10px] font-extrabold text-[#128A4E] bg-[#E8F5EE] px-2.5 py-1 rounded-md self-start mt-2 border border-[#128A4E]/15">

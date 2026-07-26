@@ -57,6 +57,7 @@ export interface RoommateCard {
   cleanliness: 'Spick & Span' | 'Moderate' | 'Chill';
   dietary: 'Veg' | 'Non-Veg' | 'Any';
   smoking: 'No Smoking' | 'Outside Only' | 'Okay';
+  memberSince?: string;
 }
 
 export interface RoomListing {
@@ -73,6 +74,8 @@ export interface RoomListing {
     photoUrl: string;
   };
   description: string;
+  createdAt?: string;
+  memberSince?: string;
 }
 
 export interface Message {
@@ -91,3 +94,15 @@ export interface ChatThread {
   roomListing?: RoomListing;
   isArchived?: boolean;
 }
+
+export type AuthActionResponse<T = unknown> = 
+  | { success: true; data: T }
+  | { success: false; error: string }
+
+export type ProfileActionResponse<T = unknown> = 
+  | { success: true; data: T }
+  | { success: false; error: string }
+
+export type PropertyActionResponse<T = unknown> = 
+  | { success: true; data: T }
+  | { success: false; error: string }
