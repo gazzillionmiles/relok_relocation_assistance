@@ -11,7 +11,7 @@ import {
 } from '@/lib/validators/schemas'
 import { AuthActionResponse } from '@/types'
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+// const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
 
 // ============================================
 // SIGN UP WITH EMAIL
@@ -31,7 +31,7 @@ export async function signUpWithEmail(
         data: {
           full_name: data.full_name,
         },
-        emailRedirectTo: `${SITE_URL}/auth/callback`,
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     })
 
@@ -116,7 +116,7 @@ export async function signInWithGoogle(
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: redirectTo || `${SITE_URL}/auth/callback`,
+        redirectTo: redirectTo || `${window.location.origin}/auth/callback`,
         queryParams: {
           access_type: 'offline',
           prompt: 'consent',
@@ -150,7 +150,7 @@ export async function signInWithFacebook(
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'facebook',
       options: {
-        redirectTo: redirectTo || `${SITE_URL}/auth/callback`,
+        redirectTo: redirectTo || `${window.location.origin}/auth/callback`,
       },
     })
 
@@ -217,7 +217,7 @@ export async function requestPasswordReset(
     const supabase = await createClient()
 
     const { error } = await supabase.auth.resetPasswordForEmail(data.email, {
-      redirectTo: `${SITE_URL}/auth/reset-password`,
+      redirectTo: `${window.location.origin}/auth/reset-password`,
     })
 
     if (error) {
