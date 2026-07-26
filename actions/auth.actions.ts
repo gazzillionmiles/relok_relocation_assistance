@@ -10,8 +10,22 @@ import {
   UpdatePasswordSchema 
 } from '@/lib/validators/schemas'
 import { AuthActionResponse } from '@/types'
+import { headers } from 'next/headers' // 👈 Added for dynamic URL resolution
 
-// const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+// Helper function to dynamically construct the base URL on the server side
+async function getDynamicSiteUrl(): Promise<string> {
+  try {
+    const headerList = await headers()
+    const host = headerList.get('host') // e.g., 'localhost:3000' or 'yourdomain.com'
+    if (!host) return 'http://localhost:3000'
+    
+    const protocol = host.includes('localhost') ? 'http' : 'https'
+    return `${protocol}://${host}`
+  } catch {
+    // Fallback if headers are somehow inaccessible in a specific context
+    return 'http://localhost:3000'
+  }
+}
 
 // ============================================
 // SIGN UP WITH EMAIL
@@ -23,6 +37,7 @@ export async function signUpWithEmail(
   try {
     const data = SignUpSchema.parse(input)
     const supabase = await createClient()
+    const siteUrl = await getDynamicSiteUrl() // 👈 Dynamically resolved
 
     const { data: authData, error } = await supabase.auth.signUp({
       email: data.email,
@@ -31,7 +46,7 @@ export async function signUpWithEmail(
         data: {
           full_name: data.full_name,
         },
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: `${siteUrl}/auth/callback`,
       },
     })
 
@@ -112,11 +127,12 @@ export async function signInWithGoogle(
 ): Promise<AuthActionResponse<{ url: string }>> {
   try {
     const supabase = await createClient()
+    const siteUrl = await getDynamicSiteUrl() // 👈 Dynamically resolved
 
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: redirectTo || `${window.location.origin}/auth/callback`,
+        redirectTo: redirectTo || `${siteUrl}/auth/callback`,
         queryParams: {
           access_type: 'offline',
           prompt: 'consent',
@@ -146,11 +162,12 @@ export async function signInWithFacebook(
 ): Promise<AuthActionResponse<{ url: string }>> {
   try {
     const supabase = await createClient()
+    const siteUrl = await getDynamicSiteUrl() // 👈 Dynamically resolved
 
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'facebook',
       options: {
-        redirectTo: redirectTo || `${window.location.origin}/auth/callback`,
+        redirectTo: redirectTo || `${siteUrl}/auth/callback`,
       },
     })
 
@@ -215,9 +232,10 @@ export async function requestPasswordReset(
   try {
     const data = ResetPasswordSchema.parse(input)
     const supabase = await createClient()
+    const siteUrl = await getDynamicSiteUrl() // 👈 Dynamically resolved
 
     const { error } = await supabase.auth.resetPasswordForEmail(data.email, {
-      redirectTo: `${window.location.origin}/auth/reset-password`,
+      redirectTo: `${siteUrl}/auth/reset-password`,
     })
 
     if (error) {
